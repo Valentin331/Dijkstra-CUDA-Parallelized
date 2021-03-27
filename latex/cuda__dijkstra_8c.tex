@@ -1,0 +1,323 @@
+\hypertarget{cuda__dijkstra_8c}{}\doxysection{cuda\+\_\+dijkstra.\+c File Reference}
+\label{cuda__dijkstra_8c}\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+
+
+Dokumentirana datoteka.  
+
+
+{\ttfamily \#include \char`\"{}cuda\+\_\+runtime.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}device\+\_\+launch\+\_\+parameters.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$limits.\+h$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$time.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{cuda__dijkstra_8c_a8d0ac7033fb1bd905e0215fadfb69c57}{PRINT\+\_\+\+THRESHOLD}}~10
+\item 
+\#define \mbox{\hyperlink{cuda__dijkstra_8c_a943995a7bf30da3587664920856533ab}{MAX\+\_\+\+WEIGHT}}~100
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{cuda__dijkstra_8c_a827a2225be1f489187f1989127e8627e}{print\+\_\+threshold\+\_\+check}} (int V)
+\begin{DoxyCompactList}\small\item\em Checks if the number of vertices is smaller then the threshold allows and returns the result. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{cuda__dijkstra_8c_a3e3fbbf6d4fbdefefc48efcdfe3d757f}{create\+Graph}} (float $\ast$graph, int N)
+\begin{DoxyCompactList}\small\item\em Populates the graph (array representation) with weighted edges (macro MAX\+\_\+\+LIMIT limits the edge weight). \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{cuda__dijkstra_8c_a0fb47edafa0875d6f44eadc096c228b7}{print\+Graph}} (float $\ast$graph, int size)
+\begin{DoxyCompactList}\small\item\em Print the graph (array representation) to console. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{cuda__dijkstra_8c_ae71d027adea7b5e73554662cc7795a94}{min\+\_\+distance\+\_\+cpu}} (float $\ast$dist, bool $\ast$spt\+Set, int V)
+\begin{DoxyCompactList}\small\item\em Get\textquotesingle{}s minimum distance from a \char`\"{}src\char`\"{} vertex to any other vertex in the graph. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{cuda__dijkstra_8c_a7647a66cc93c55e61c7ccbed825693e0}{dijkstra\+\_\+cpu}} (float $\ast$graph, int src, int V, float $\ast$result)
+\begin{DoxyCompactList}\small\item\em Function that run dijskta on a set of data and calculates SPT for one vertex. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{cuda__dijkstra_8c_a2be42b1079f1e75f20a998e877a1a0af}{print\+\_\+solution}} (int src, float $\ast$dist, int V)
+\begin{DoxyCompactList}\small\item\em Untility function to print the solution of dijsktra run for a specific vertex. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{cuda__dijkstra_8c_ad4d5b11083a69049aee712579699d958}{print\+\_\+solution\+\_\+interval}} (int src, float $\ast$dist, int V, int size)
+\begin{DoxyCompactList}\small\item\em Untility function to print the solution of dijsktra run for a specific vertex (whole array) \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{cuda__dijkstra_8c_ab204bbfcdf29c066fe41ed197dd9f6b0}{populate\+\_\+result\+\_\+array}} (int src, float $\ast$dist, float $\ast$result, int V, int size)
+\begin{DoxyCompactList}\small\item\em Populates an array with shortest paths for all vertices based on per-\/vertex dijsktra calucations. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+global\+\_\+\+\_\+ void \mbox{\hyperlink{cuda__dijkstra_8c_a42f12c2d8b3aa9abb79db617349188bb}{gpu\+\_\+set\+Up\+Graph}} (float $\ast$result, bool $\ast$visited)
+\begin{DoxyCompactList}\small\item\em GPU Prepare the helper graphs for dijkstra algorithm. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+global\+\_\+\+\_\+ void \mbox{\hyperlink{cuda__dijkstra_8c_a1b00209c65216ba97547292bd07906e2}{gpu\+\_\+dijkstra\+\_\+threads}} (float $\ast$graph, float $\ast$result, bool $\ast$visited, int V)
+\begin{DoxyCompactList}\small\item\em GPU Performs dijkstra\textquotesingle{}s algorithm for every vertice in the graph in separate cores. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{cuda__dijkstra_8c_a6de707153ac632ca6bf65586cf35aa26}{compare\+\_\+results}} (float $\ast$graph1, float $\ast$graph2, int size)
+\begin{DoxyCompactList}\small\item\em Takes two arrays and compares values on each index. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{cuda__dijkstra_8c_af71001c7d1589d607dd599f81bf8011a}{compare\+\_\+times}} (float t1, float t2)
+\begin{DoxyCompactList}\small\item\em Returns the difference between two double numbers. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{cuda__dijkstra_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\begin{DoxyCompactList}\small\item\em Main function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Dokumentirana datoteka. 
+
+Datoteka u kojoj su dokumentirane funkcije. 
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{cuda__dijkstra_8c_a943995a7bf30da3587664920856533ab}\label{cuda__dijkstra_8c_a943995a7bf30da3587664920856533ab}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!MAX\_WEIGHT@{MAX\_WEIGHT}}
+\index{MAX\_WEIGHT@{MAX\_WEIGHT}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{MAX\_WEIGHT}{MAX\_WEIGHT}}
+{\footnotesize\ttfamily \#define MAX\+\_\+\+WEIGHT~100}
+
+\mbox{\Hypertarget{cuda__dijkstra_8c_a8d0ac7033fb1bd905e0215fadfb69c57}\label{cuda__dijkstra_8c_a8d0ac7033fb1bd905e0215fadfb69c57}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!PRINT\_THRESHOLD@{PRINT\_THRESHOLD}}
+\index{PRINT\_THRESHOLD@{PRINT\_THRESHOLD}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{PRINT\_THRESHOLD}{PRINT\_THRESHOLD}}
+{\footnotesize\ttfamily \#define PRINT\+\_\+\+THRESHOLD~10}
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{cuda__dijkstra_8c_a6de707153ac632ca6bf65586cf35aa26}\label{cuda__dijkstra_8c_a6de707153ac632ca6bf65586cf35aa26}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!compare\_results@{compare\_results}}
+\index{compare\_results@{compare\_results}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{compare\_results()}{compare\_results()}}
+{\footnotesize\ttfamily void compare\+\_\+results (\begin{DoxyParamCaption}\item[{float $\ast$}]{graph1,  }\item[{float $\ast$}]{graph2,  }\item[{int}]{size }\end{DoxyParamCaption})}
+
+
+
+Takes two arrays and compares values on each index. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em graph1} & Graph 1 \\
+\hline
+{\em graph2} & Graph 2 \\
+\hline
+{\em size} & size of arrays \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{cuda__dijkstra_8c_af71001c7d1589d607dd599f81bf8011a}\label{cuda__dijkstra_8c_af71001c7d1589d607dd599f81bf8011a}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!compare\_times@{compare\_times}}
+\index{compare\_times@{compare\_times}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{compare\_times()}{compare\_times()}}
+{\footnotesize\ttfamily double compare\+\_\+times (\begin{DoxyParamCaption}\item[{float}]{t1,  }\item[{float}]{t2 }\end{DoxyParamCaption})}
+
+
+
+Returns the difference between two double numbers. 
+
+NOTE\+: Assumption is made that t2 is greater then t1
+
+
+\begin{DoxyParams}{Parameters}
+{\em t1} & \\
+\hline
+{\em t2} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{cuda__dijkstra_8c_a3e3fbbf6d4fbdefefc48efcdfe3d757f}\label{cuda__dijkstra_8c_a3e3fbbf6d4fbdefefc48efcdfe3d757f}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!createGraph@{createGraph}}
+\index{createGraph@{createGraph}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{createGraph()}{createGraph()}}
+{\footnotesize\ttfamily void create\+Graph (\begin{DoxyParamCaption}\item[{float $\ast$}]{graph,  }\item[{int}]{N }\end{DoxyParamCaption})}
+
+
+
+Populates the graph (array representation) with weighted edges (macro MAX\+\_\+\+LIMIT limits the edge weight). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em graph} & array representation of a graph \\
+\hline
+{\em N} & num of vertices \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{cuda__dijkstra_8c_a7647a66cc93c55e61c7ccbed825693e0}\label{cuda__dijkstra_8c_a7647a66cc93c55e61c7ccbed825693e0}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!dijkstra\_cpu@{dijkstra\_cpu}}
+\index{dijkstra\_cpu@{dijkstra\_cpu}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{dijkstra\_cpu()}{dijkstra\_cpu()}}
+{\footnotesize\ttfamily void dijkstra\+\_\+cpu (\begin{DoxyParamCaption}\item[{float $\ast$}]{graph,  }\item[{int}]{src,  }\item[{int}]{V,  }\item[{float $\ast$}]{result }\end{DoxyParamCaption})}
+
+
+
+Function that run dijskta on a set of data and calculates SPT for one vertex. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em graph} & (array) input graph with weighted edges and no loops \\
+\hline
+{\em src} & (int) index of vertex \\
+\hline
+{\em V} & number of vertices \\
+\hline
+{\em result} & (array) resulting graph \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{cuda__dijkstra_8c_a1b00209c65216ba97547292bd07906e2}\label{cuda__dijkstra_8c_a1b00209c65216ba97547292bd07906e2}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!gpu\_dijkstra\_threads@{gpu\_dijkstra\_threads}}
+\index{gpu\_dijkstra\_threads@{gpu\_dijkstra\_threads}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{gpu\_dijkstra\_threads()}{gpu\_dijkstra\_threads()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+global\+\_\+\+\_\+ void gpu\+\_\+dijkstra\+\_\+threads (\begin{DoxyParamCaption}\item[{float $\ast$}]{graph,  }\item[{float $\ast$}]{result,  }\item[{bool $\ast$}]{visited,  }\item[{int}]{V }\end{DoxyParamCaption})}
+
+
+
+GPU Performs dijkstra\textquotesingle{}s algorithm for every vertice in the graph in separate cores. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em graph} & GPU initial graph array with weighted edges and no loops \\
+\hline
+{\em result} & GPU resulting array graph \\
+\hline
+{\em visited} & GPU array graph containing data on every vertex included-\/in-\/\+SPT state \\
+\hline
+{\em V} & number of vertices \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{cuda__dijkstra_8c_a42f12c2d8b3aa9abb79db617349188bb}\label{cuda__dijkstra_8c_a42f12c2d8b3aa9abb79db617349188bb}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!gpu\_setUpGraph@{gpu\_setUpGraph}}
+\index{gpu\_setUpGraph@{gpu\_setUpGraph}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{gpu\_setUpGraph()}{gpu\_setUpGraph()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+global\+\_\+\+\_\+ void gpu\+\_\+set\+Up\+Graph (\begin{DoxyParamCaption}\item[{float $\ast$}]{result,  }\item[{bool $\ast$}]{visited }\end{DoxyParamCaption})}
+
+
+
+GPU Prepare the helper graphs for dijkstra algorithm. 
+
+Initializes GPU resulting graph with max distances that dijsktra algoithm requires. Sets all indexes of \char`\"{}visited\char`\"{} graph to false -\/ no vertecies are included yet in the SPT exept starting vertex
+
+
+\begin{DoxyParams}{Parameters}
+{\em result} & GPU resulting array graph \\
+\hline
+{\em visited} & GPU array graph containing data on every vertex included-\/in-\/\+SPT state \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{cuda__dijkstra_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{cuda__dijkstra_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!main@{main}}
+\index{main@{main}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Main function. 
+
+\mbox{\Hypertarget{cuda__dijkstra_8c_ae71d027adea7b5e73554662cc7795a94}\label{cuda__dijkstra_8c_ae71d027adea7b5e73554662cc7795a94}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!min\_distance\_cpu@{min\_distance\_cpu}}
+\index{min\_distance\_cpu@{min\_distance\_cpu}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{min\_distance\_cpu()}{min\_distance\_cpu()}}
+{\footnotesize\ttfamily int min\+\_\+distance\+\_\+cpu (\begin{DoxyParamCaption}\item[{float $\ast$}]{dist,  }\item[{bool $\ast$}]{spt\+Set,  }\item[{int}]{V }\end{DoxyParamCaption})}
+
+
+
+Get\textquotesingle{}s minimum distance from a \char`\"{}src\char`\"{} vertex to any other vertex in the graph. 
+
+Pick the minimum distance vertex from the set of vertices not yet processed. \char`\"{}u\char`\"{} is always equal to \char`\"{}src\char`\"{} in the first iteration.
+
+
+\begin{DoxyParams}{Parameters}
+{\em dist} & resulting array of the graph that dijskta uses in it\textquotesingle{}s iterations \\
+\hline
+{\em spt\+Set} & graph array (num\+Of\+Vertices$^\wedge$2) that contains bools if the vertex is included in SPT \\
+\hline
+{\em V} & number of vertices \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+integer representing index of vertex 
+\end{DoxyReturn}
+\mbox{\Hypertarget{cuda__dijkstra_8c_ab204bbfcdf29c066fe41ed197dd9f6b0}\label{cuda__dijkstra_8c_ab204bbfcdf29c066fe41ed197dd9f6b0}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!populate\_result\_array@{populate\_result\_array}}
+\index{populate\_result\_array@{populate\_result\_array}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{populate\_result\_array()}{populate\_result\_array()}}
+{\footnotesize\ttfamily void populate\+\_\+result\+\_\+array (\begin{DoxyParamCaption}\item[{int}]{src,  }\item[{float $\ast$}]{dist,  }\item[{float $\ast$}]{result,  }\item[{int}]{V,  }\item[{int}]{size }\end{DoxyParamCaption})}
+
+
+
+Populates an array with shortest paths for all vertices based on per-\/vertex dijsktra calucations. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em src} & (int) index of vertex \\
+\hline
+{\em dist} & (array) containing per vertex dijkstra solution \\
+\hline
+{\em result} & array that (will) contain all shortest paths \\
+\hline
+{\em V} & number of vertices \\
+\hline
+{\em size} & suze of array (num\+Of\+Vertices$^\wedge$2) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{cuda__dijkstra_8c_a2be42b1079f1e75f20a998e877a1a0af}\label{cuda__dijkstra_8c_a2be42b1079f1e75f20a998e877a1a0af}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!print\_solution@{print\_solution}}
+\index{print\_solution@{print\_solution}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{print\_solution()}{print\_solution()}}
+{\footnotesize\ttfamily void print\+\_\+solution (\begin{DoxyParamCaption}\item[{int}]{src,  }\item[{float $\ast$}]{dist,  }\item[{int}]{V }\end{DoxyParamCaption})}
+
+
+
+Untility function to print the solution of dijsktra run for a specific vertex. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em src} & (int) index of vertex \\
+\hline
+{\em dist} & (array) resulting graph \\
+\hline
+{\em V} & number of vertices \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{cuda__dijkstra_8c_ad4d5b11083a69049aee712579699d958}\label{cuda__dijkstra_8c_ad4d5b11083a69049aee712579699d958}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!print\_solution\_interval@{print\_solution\_interval}}
+\index{print\_solution\_interval@{print\_solution\_interval}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{print\_solution\_interval()}{print\_solution\_interval()}}
+{\footnotesize\ttfamily void print\+\_\+solution\+\_\+interval (\begin{DoxyParamCaption}\item[{int}]{src,  }\item[{float $\ast$}]{dist,  }\item[{int}]{V,  }\item[{int}]{size }\end{DoxyParamCaption})}
+
+
+
+Untility function to print the solution of dijsktra run for a specific vertex (whole array) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em src} & (int) index of vertex \\
+\hline
+{\em dist} & (array) resulting graph \\
+\hline
+{\em V} & number of vertices \\
+\hline
+{\em size} & suze of array (num\+Of\+Vertices$^\wedge$2) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{cuda__dijkstra_8c_a827a2225be1f489187f1989127e8627e}\label{cuda__dijkstra_8c_a827a2225be1f489187f1989127e8627e}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!print\_threshold\_check@{print\_threshold\_check}}
+\index{print\_threshold\_check@{print\_threshold\_check}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{print\_threshold\_check()}{print\_threshold\_check()}}
+{\footnotesize\ttfamily bool print\+\_\+threshold\+\_\+check (\begin{DoxyParamCaption}\item[{int}]{V }\end{DoxyParamCaption})}
+
+
+
+Checks if the number of vertices is smaller then the threshold allows and returns the result. 
+
+Accepts a whole number that represents the number of vertices in a graph that\textquotesingle{}s about to run and returns a bool value depending if it meets the requirement.
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & number of vertices \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool, true / false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{cuda__dijkstra_8c_a0fb47edafa0875d6f44eadc096c228b7}\label{cuda__dijkstra_8c_a0fb47edafa0875d6f44eadc096c228b7}} 
+\index{cuda\_dijkstra.c@{cuda\_dijkstra.c}!printGraph@{printGraph}}
+\index{printGraph@{printGraph}!cuda\_dijkstra.c@{cuda\_dijkstra.c}}
+\doxysubsubsection{\texorpdfstring{printGraph()}{printGraph()}}
+{\footnotesize\ttfamily void print\+Graph (\begin{DoxyParamCaption}\item[{float $\ast$}]{graph,  }\item[{int}]{size }\end{DoxyParamCaption})}
+
+
+
+Print the graph (array representation) to console. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em graph} & array representation of a graph \\
+\hline
+{\em size} & size of the array (num\+Of\+Vertices$^\wedge$2) \\
+\hline
+\end{DoxyParams}

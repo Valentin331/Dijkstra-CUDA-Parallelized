@@ -1,9 +1,10 @@
 /**
- * \file cuda_dijkstra.cu
- * \brief Pokreće dijkstrin algoritam na CUDA-enabled GPU karticama sa brojem vrhova koje unosi korisnik.
+ * \file cuda_dijkstra.c
+ * \brief Dokumentirana datoteka.
  *
+ * Datoteka u kojoj su dokumentirane funkcije.
  */
- 
+
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
@@ -13,16 +14,16 @@
 #include <iostream>
 #include <time.h>
 
-// TODO: Figure out if using "constexpr auto" is better?
 #define PRINT_THRESHOLD 10	// Number of vertices threshold to stop printing data
 #define MAX_WEIGHT 100 // Max edge weight ([0, MAX_WEIGHT])
 
 
 /**
- * \brief Checks if the number of vertices is smaller then the threshold allows and returns the result
+ * \brief Checks if the number of vertices is smaller then the threshold allows and returns the result.
  *
- * Accepts a whole number that represents the number of vertices in a graph that's about to run and returns a bool value depending if it meets the requirement
+ * Accepts a whole number that represents the number of vertices in a graph that's about to run and returns a bool value depending if it meets the requirement.
  *
+ * \param V number of vertices
  * \return bool, true / false
  */
 bool print_threshold_check(int V)
@@ -34,7 +35,12 @@ bool print_threshold_check(int V)
 	return false;
 }
 
-// Create a graph
+/**
+ * \brief Populates the graph (array representation) with weighted edges (macro MAX_LIMIT limits the edge weight).
+ *
+ * \param graph array representation of a graph
+ * \param N num of vertices
+ */
 void createGraph(float *graph, int N)	
 {
 	int col;
@@ -60,7 +66,12 @@ void createGraph(float *graph, int N)
 	}
 }
 
-// Print graph
+/**
+ * \brief Print the graph (array representation) to console.
+ *
+ * \param graph array representation of a graph
+ * \param size size of the array (numOfVertices^2)
+ */
 void printGraph(float *graph, int size)
 {
 	int index;
@@ -79,15 +90,23 @@ void printGraph(float *graph, int size)
 	printf("\n");
 }
 
+/**
+ * \brief Get's minimum distance from a "src" vertex to any other vertex in the graph.
+ *
+ * Pick the minimum distance vertex from the set of vertices not yet processed. "u" is always equal to "src" in the first iteration. 
+ * 
+ * \param dist resulting array of the graph that dijskta uses in it's iterations
+ * \param sptSet graph array (numOfVertices^2) that contains bools if the vertex is included in SPT
+ * \param V number of vertices
+ * \return integer representing index of vertex
+ */
 int min_distance_cpu(float *dist, bool *sptSet, int V)
 {
 	// Initialize min value
-	// TODO => choose how to set up variables
 	float min = INT_MAX;
 	float min_index;
 
 	// Find minimum distance
-	// TODO => Fill the comments for this loop
 	for (int v = 0; v < V; v++)
 	{
 		if (!sptSet[v] && dist[v] <= min) 
@@ -100,7 +119,14 @@ int min_distance_cpu(float *dist, bool *sptSet, int V)
 	return min_index;
 }
 
-// Dijkstra implementation on the CPU
+/**
+ * \brief Function that run dijskta on a set of data and calculates SPT for one vertex.
+ * 
+ * \param graph (array) input graph with weighted edges and no loops
+ * \param src (int) index of vertex
+ * \param V number of vertices
+ * \param result (array) resulting graph
+ */
 void dijkstra_cpu(float *graph, int src, int V, float *result)
 {
 	// sptSet[i] will be true if vertex i is included in shortest
@@ -145,7 +171,13 @@ void dijkstra_cpu(float *graph, int src, int V, float *result)
 	}
 }
 
-// Untility function to print the solution of dijsktra run for a specific vertex
+/**
+ * \brief Untility function to print the solution of dijsktra run for a specific vertex
+ * 
+ * \param src (int) index of vertex
+ * \param dist (array) resulting graph
+ * \param V number of vertices
+ */
 void print_solution(int src, float *dist, int V)
 {
 	printf("\n Vrh	Udaljenost of izvora %d\n", src);
@@ -155,7 +187,14 @@ void print_solution(int src, float *dist, int V)
 	}
 }
 
-// Untility function to print the solution of dijsktra run for a specific vertex (whole array)
+/**
+ * \brief Untility function to print the solution of dijsktra run for a specific vertex (whole array)
+ * 
+ * \param src (int) index of vertex
+ * \param dist (array) resulting graph
+ * \param V number of vertices
+ * \param size suze of array (numOfVertices^2)
+ */
 void print_solution_interval(int src, float* dist, int V, int size)
 {
 	printf("\n Vrh	Udaljenost of izvora %d\n", src);
@@ -165,7 +204,15 @@ void print_solution_interval(int src, float* dist, int V, int size)
 	}
 }
 
-// Populates an array with shortest paths for all vertices based on per-vertex dijsktra calucations
+/**
+ * \brief Populates an array with shortest paths for all vertices based on per-vertex dijsktra calucations.
+ * 
+ * \param src (int) index of vertex
+ * \param dist (array) containing per vertex dijkstra solution
+ * \param result array that (will) contain all shortest paths
+ * \param V number of vertices
+ * \param size suze of array (numOfVertices^2)
+ */
 void populate_result_array(int src, float *dist, float *result, int V, int size)
 {
 	for (int i = 0; i < V; i++)
@@ -175,7 +222,15 @@ void populate_result_array(int src, float *dist, float *result, int V, int size)
 	}
 }
 
-// Prepare the data for dijkstra algorithm
+/**
+ * \brief GPU Prepare the helper graphs for dijkstra algorithm.
+ * 
+ * Initializes GPU resulting graph with max distances that dijsktra algoithm requires.
+ * Sets all indexes of "visited" graph to false - no vertecies are included yet in the SPT exept starting vertex 
+ * 
+ * \param result GPU resulting array graph
+ * \param visited GPU array graph containing data on every vertex included-in-SPT state
+ */
 __global__ void gpu_setUpGraph(float* result, bool* visited) {
 
 	// Initialize all distances as INFINITE and stpSet[] as false
@@ -191,36 +246,14 @@ __global__ void gpu_setUpGraph(float* result, bool* visited) {
 	else result[index] = INT_MAX;
 }
 
-// performs dijkstra's algorithm for every vertice in the graph in separate gpu blocks
-__global__ void gpu_dijkstra_blocks(float* graph, float* result, bool* visited, int V) {
-
-	// Find shortest path for all vertices
-	for (int count = 0; count < V - 1; count++)
-	{
-		// Pick the minimum distance vertex from the set of vertices not
-		// yet processed.
-		int min = INT_MAX, u;
-		for (int v = 0; v < V; v++)
-			if (visited[(V * blockIdx.x) + v] == false && result[(V * blockIdx.x) + v] <= min)
-				min = result[(V * blockIdx.x) + v], u = v;
-
-		// Mark the picked vertex as processed
-		visited[(V * blockIdx.x) + u] = true;
-
-		// Update the wieght value 
-		for (int v = 0; v < V; v++) {
-
-			// Update only if is not in visited, there is an edge from 
-			// u to v, and total weight of path from src to  v through u is 
-			// smaller than current value
-			if (!visited[(V * blockIdx.x) + v] && graph[(u * V) + v] && result[(V * blockIdx.x) + u] != INT_MAX
-				&& result[(V * blockIdx.x) + u] + graph[(u * V) + v] < result[(V * blockIdx.x) + v])
-				result[(V * blockIdx.x) + v] = result[(V * blockIdx.x) + u] + graph[(u * V) + v];
-		}
-	}
-}
-
-// performs dijkstra's algorithm for every vertice in the graph in separate cores
+/**
+ * \brief GPU Performs dijkstra's algorithm for every vertice in the graph in separate cores.
+ * 
+ * \param graph GPU initial graph array with weighted edges and no loops
+ * \param result GPU resulting array graph
+ * \param visited GPU array graph containing data on every vertex included-in-SPT state
+ * \param V number of vertices
+ */
 __global__ void gpu_dijkstra_threads(float* graph, float* result, bool* visited, int V) {
 
 	// Find shortest path for all vertices
@@ -249,7 +282,14 @@ __global__ void gpu_dijkstra_threads(float* graph, float* result, bool* visited,
 	}
 }
 
-// Takes two arrays and compares values on each index
+/**
+ * \brief Takes two arrays and compares values on each index.
+ * 
+ * \param graph1 Graph 1
+ * \param graph2 Graph 2
+ * \param size size of arrays
+ * 
+ */
 void compare_results(float *graph1, float *graph2, int size)
 {
 	for (int i = 0; i < size; i++)
@@ -263,31 +303,27 @@ void compare_results(float *graph1, float *graph2, int size)
 	printf("CPU i GPU matice se podudaraju.");
 }
 
-// Returns the difference between two double numbers
-// NOTE: Assumption is made that t2 is greater then t1
+/**
+ * \brief Returns the difference between two double numbers.
+ * 
+ * NOTE: Assumption is made that t2 is greater then t1
+ * 
+ * \param t1
+ * \param t2
+ * 
+ */
 double compare_times(float t1, float t2)
 {
 	return (t1-t2);
 }
 
+/**
+ * \brief Main function.
+ */
 int main()
 {
 	// NOTE:
 	// All printing threshold checks will be performed in the main function as to maintain printing functions reusability
-
-	// STEPS:
-	// [x] Get user input
-	// [x] Generate graph
-	// [x] Copy graph to GPU
-	// [x] Create time measuring for host
-	// [x] Create time measuring for device
-	// [x] Run dijkstra on GPU
-	// [x] Copy data from GPU to CPU
-	// [x] Print data
-	// [x] Verify data integrity
-	// [x] Print time measurements
-	// [x] Create print threshold checks
-	// [x] finish memory management
 
 	/**************************** TAKE USER INPUT *****************************/
 
@@ -405,7 +441,7 @@ int main()
 	gpu_dijkstra_threads << < 1, *numOfVertices >> > (dev_graph, dev_result, dev_visited, *numOfVertices);
 
 	cudaEventRecord(stop); // Mark the event of end of GPU calcuations
-	cudaEventSynchronize(stop); // TODO: Comment this
+	cudaEventSynchronize(stop);
 
 	float gpu_total_time = 0; // stores total time required for GPU calucations
 	cudaEventElapsedTime(&gpu_total_time, start, stop); // Calculates the time based on events
