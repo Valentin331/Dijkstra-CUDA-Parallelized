@@ -1,4 +1,10 @@
-﻿#include "cuda_runtime.h"
+/**
+ * \file cuda_dijkstra.cu
+ * \brief Pokreće dijkstrin algoritam na CUDA-enabled GPU karticama sa brojem vrhova koje unosi korisnik.
+ *
+ */
+ 
+#include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
 #include <stdio.h>
@@ -11,7 +17,14 @@
 #define PRINT_THRESHOLD 10	// Number of vertices threshold to stop printing data
 #define MAX_WEIGHT 100 // Max edge weight ([0, MAX_WEIGHT])
 
-// Checks if the number of vertices is smaller then the threshold allows and returns the result
+
+/**
+ * \brief Checks if the number of vertices is smaller then the threshold allows and returns the result
+ *
+ * Accepts a whole number that represents the number of vertices in a graph that's about to run and returns a bool value depending if it meets the requirement
+ *
+ * \return bool, true / false
+ */
 bool print_threshold_check(int V)
 {
 	if (V < PRINT_THRESHOLD)
@@ -447,3 +460,4 @@ int main()
 
 	return 0;
 }
+
